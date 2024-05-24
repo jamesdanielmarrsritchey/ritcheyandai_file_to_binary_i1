@@ -1,0 +1,199 @@
+jamesdanielmarrsritchey: ```#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <fstream>
+
+std::string getCmdOption(char ** begin, char ** end, const std::string & option)
+{
+    char ** itr = std::find(begin, end, option);
+    if (itr != end && ++itr != end)
+    {
+        return std::string(*itr);
+    }
+    return "";
+}
+
+int main(int argc, char* argv[]) {
+    std::vector<std::string> args(argv, argv + argc);
+    std::string source_filename = getCmdOption(argv, argv + argc, "--source_file");
+    std::string destination_filename = getCmdOption(argv, argv + argc, "--destination_file");
+    std::string delimiter = getCmdOption(argv, argv + argc, "--delimiter");
+
+    if (delimiter == "\\n") {
+        delimiter = "\n"; // treat as line ending
+    } else if (delimiter == "\\t") {
+        delimiter = "\t"; // treat as tab
+    } else if (delimiter.empty()) {
+        delimiter = " "; // default delimiter is space
+    }
+
+    if (!source_filename.empty() && !destination_filename.empty()) {
+        std::ifstream source_file(source_filename);
+        std::ofstream destination_file(destination_filename);
+        if (source_file.is_open() && destination_file.is_open()) {
+            char c;
+            while (source_file.get(c)) {
+                destination_file << static_cast<int>(c);
+                if (!source_file.eof()) {
+                    destination_file << delimiter;
+                }
+            }
+            source_file.close();
+            destination_file.close();
+            return true;
+        } else {
+            std::cout << "Unable to open file." << std::endl;
+        }
+    } else {
+        std::cout << "No source file or destination file was given." << std::endl;
+    }
+
+    return 0;
+}
+
+GitHub Copilot: This C++ program is a command-line utility that reads a source file and writes the ASCII values of each character to a destination file, separated by a specified delimiter. 
+
+Here's a step-by-step explanation:
+
+1. The `getCmdOption` function is used to parse command-line arguments. It takes a range of arguments (`begin` and `end`) and an `option` string. It finds the `option` in the range and if found, returns the next argument as the value of the option.
+
+2. In the `main` function, command-line arguments are parsed into a vector of strings for easy access.
+
+3. The `--source_file`, `--destination_file`, and `--delimiter` options are parsed from the command-line arguments. If `--delimiter` is not provided, a space is used as the default delimiter.
+
+4. If `--delimiter` is provided as `\\n` or `\\t`, they are treated as line ending and tab respectively.
+
+5. If both `source_filename` and `destination_filename` are provided, the program attempts to open the source file for reading and the destination file for writing.
+
+6. If both files are successfully opened, the program reads each character from the source file, writes its ASCII value to the destination file, and follows it with the delimiter. This continues until the end of the source file is reached.
+
+7. If either file cannot be opened, or if either filename was not provided, an error message is printed to the console.
+
+8. The program returns 0 to indicate successful completion. If the files were successfully opened and processed, it returns `true` (which is implicitly converted to 1).
+
+jamesdanielmarrsritchey: Instead of converting to a decimal representation, convert to a binary representation.
+
+GitHub Copilot: To convert the characters to binary representation, you can use the `std::bitset` class from the `<bitset>` library. Here's how you can modify your code:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <bitset>
+
+std::string getCmdOption(char ** begin, char ** end, const std::string & option)
+{
+    char ** itr = std::find(begin, end, option);
+    if (itr != end && ++itr != end)
+    {
+        return std::string(*itr);
+    }
+    return "";
+}
+
+int main(int argc, char* argv[]) {
+    std::vector<std::string> args(argv, argv + argc);
+    std::string source_filename = getCmdOption(argv, argv + argc, "--source_file");
+    std::string destination_filename = getCmdOption(argv, argv + argc, "--destination_file");
+    std::string delimiter = getCmdOption(argv, argv + argc, "--delimiter");
+
+    if (delimiter == "\\n") {
+        delimiter = "\n"; // treat as line ending
+    } else if (delimiter == "\\t") {
+        delimiter = "\t"; // treat as tab
+    } else if (delimiter.empty()) {
+        delimiter = " "; // default delimiter is space
+    }
+
+    if (!source_filename.empty() && !destination_filename.empty()) {
+        std::ifstream source_file(source_filename);
+        std::ofstream destination_file(destination_filename);
+        if (source_file.is_open() && destination_file.is_open()) {
+            char c;
+            while (source_file.get(c)) {
+                destination_file << std::bitset<8>(c);
+                if (!source_file.eof()) {
+                    destination_file << delimiter;
+                }
+            }
+            source_file.close();
+            destination_file.close();
+            return true;
+        } else {
+            std::cout << "Unable to open file." << std::endl;
+        }
+    } else {
+        std::cout << "No source file or destination file was given." << std::endl;
+    }
+
+    return 0;
+}
+```
+
+In this code, `std::bitset<8>(c)` is used to convert the character `c` to a binary string of length 8. The binary string is then written to the destination file.
+
+jamesdanielmarrsritchey: The default delimiter should be nothing.
+
+GitHub Copilot: Sure, you can easily change the default delimiter to an empty string. Here's the updated code:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <fstream>
+#include <bitset>
+
+std::string getCmdOption(char ** begin, char ** end, const std::string & option)
+{
+    char ** itr = std::find(begin, end, option);
+    if (itr != end && ++itr != end)
+    {
+        return std::string(*itr);
+    }
+    return "";
+}
+
+int main(int argc, char* argv[]) {
+    std::vector<std::string> args(argv, argv + argc);
+    std::string source_filename = getCmdOption(argv, argv + argc, "--source_file");
+    std::string destination_filename = getCmdOption(argv, argv + argc, "--destination_file");
+    std::string delimiter = getCmdOption(argv, argv + argc, "--delimiter");
+
+    if (delimiter == "\\n") {
+        delimiter = "\n"; // treat as line ending
+    } else if (delimiter == "\\t") {
+        delimiter = "\t"; // treat as tab
+    } else if (delimiter.empty()) {
+        delimiter = ""; // default delimiter is nothing
+    }
+
+    if (!source_filename.empty() && !destination_filename.empty()) {
+        std::ifstream source_file(source_filename);
+        std::ofstream destination_file(destination_filename);
+        if (source_file.is_open() && destination_file.is_open()) {
+            char c;
+            while (source_file.get(c)) {
+                destination_file << std::bitset<8>(c);
+                if (!source_file.eof()) {
+                    destination_file << delimiter;
+                }
+            }
+            source_file.close();
+            destination_file.close();
+            return true;
+        } else {
+            std::cout << "Unable to open file." << std::endl;
+        }
+    } else {
+        std::cout << "No source file or destination file was given." << std::endl;
+    }
+
+    return 0;
+}
+```
+
+Now, if no delimiter is specified, the binary representations of the characters will be written to the destination file without any separation.
